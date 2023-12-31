@@ -1,0 +1,13 @@
+numpy
+pandas
+matplotlib
+torch
+tqdm
+scikit-learn
+scipy
+
+# hf
+tokenizers
+transformers
+datasets
+accelerate
