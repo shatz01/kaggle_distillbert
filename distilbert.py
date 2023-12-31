@@ -19,7 +19,6 @@ from transformers import (
 )
 
 
-
 DATA_ROOT = "/root/kag_dir/data/"
 TRAIN_DATA = os.path.join(DATA_ROOT, "train_v2_drcat_02.csv")
 
@@ -28,7 +27,14 @@ if __name__ == "__main__":
 
     ### Read Data ###
     train = pd.read_csv(TRAIN_DATA)
-    train_df, val_df = train_test_split(train, test_size=0.2, random_state=42)
+
+    ## Train dataset length = 35717, Val dataset length = 9151
+    val_df = train[train['prompt_name'].isin(["Car-free cities", "Does the electoral college work?"])]
+    train_df = train[~train['prompt_name'].isin(["Car-free cities", "Does the electoral college work?"])]
+
+    ## Train dataset length = 35894, Val dataset length = 8974
+    # train_df, val_df = train_test_split(train, test_size=0.2, random_state=42)
+
     # test = pd.read_csv("/kaggle/input/llm-detect-ai-generated-text/test_essays.csv")
     # could sample for class balance, specific prompts etc
     # sampled_train = train.query("RDizzl3_seven").reset_index(drop=True)
