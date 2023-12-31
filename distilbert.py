@@ -3,6 +3,8 @@
 From here: https://www.kaggle.com/code/carrot1500/distilbertclassifier-from-scratch-with
 """
 import os
+os.environ["WANDB_PROJECT"] = "distillbert-kaggle-01"  # name your W&B project
+# os.environ["WANDB_LOG_MODEL"] = "checkpoint"  # log all model checkpoints
 import pandas as pd
 from kag_utils import bpe_tokenizer, daigt_dataset, metrics
 from collections import Counter
@@ -15,6 +17,8 @@ from transformers import (
     DistilBertForSequenceClassification, 
     DistilBertConfig
 )
+
+
 
 DATA_ROOT = "/root/kag_dir/data/"
 TRAIN_DATA = os.path.join(DATA_ROOT, "train_v2_drcat_02.csv")
@@ -69,12 +73,12 @@ if __name__ == "__main__":
         weight_decay=0.01,               # strength of weight decay
         logging_dir="logs",            # directory for storing logs
         logging_steps=100,
-        report_to="none",
         evaluation_strategy="steps",
         eval_steps=100,
-        load_best_model_at_end=True,
+        load_best_model_at_end=False,
         metric_for_best_model="roc_auc",
         greater_is_better=True,
+        report_to="wandb" if os.environ.get("WANDB_PROJECT") else "none",
     )
     trainer = Trainer(
         model=db_model,                     # the instantiated 🤗 Transformers model to be trained
@@ -83,3 +87,4 @@ if __name__ == "__main__":
         eval_dataset=val_dataset,           # evaluation dataset
         compute_metrics=metrics.compute_roc_auc,
     )
+    trainer.train()
