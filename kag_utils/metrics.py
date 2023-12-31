@@ -11,7 +11,7 @@ def compute_roc_auc(eval_pred):
 
 def compute_accuracy(eval_pred):
     logits, labels = eval_pred.predictions, eval_pred.label_ids
-    if labels.std() < 1E-8: # only one class present in dataset
-        return {"accuracy": 0.0}
+    # if labels.std() < 1E-8: # only one class present in dataset
+    #     return {"accuracy": 0.0}
     preds = np.argmax(logits, axis=-1)
     return {"accuracy": (preds == labels).mean()}

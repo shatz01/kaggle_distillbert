@@ -57,9 +57,17 @@ if __name__ == "__main__":
 
     ### Create Datasets ###
     sl = slice(None)
+    # sl = slice(0, 500)
     train_dataset = daigt_dataset.DAIGTDataset.create_tokenized_dataset(tokenizer, train_df[sl])
     val_dataset = daigt_dataset.DAIGTDataset.create_tokenized_dataset(tokenizer, val_df[sl])
     print(f"Train dataset length = {len(train_dataset)}, Val dataset length = {len(val_dataset)}")
+
+    ### Compute multiple Metrics ###
+    def multi_compute_metrics(eval_pred):
+        return {
+            "accuracy": metrics.compute_accuracy(eval_pred)["accuracy"],
+            "roc_auc": metrics.compute_roc_auc(eval_pred)["roc_auc"]
+        }
 
     ### Train ###
     db_model = DistilBertForSequenceClassification(db_config)
@@ -85,6 +93,6 @@ if __name__ == "__main__":
         args=training_args,                 # training arguments, defined above
         train_dataset=train_dataset,        # training dataset
         eval_dataset=val_dataset,           # evaluation dataset
-        compute_metrics=metrics.compute_roc_auc,
+        compute_metrics=multi_compute_metrics,
     )
     trainer.train()
